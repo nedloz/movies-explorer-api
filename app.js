@@ -12,7 +12,6 @@ const centralErrorHandler = require('./middlewares/centralErrorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
-const { PORT = 3000 } = process.env;
 
 try {
   mongoose.connect('mongodb://127.0.0.1:27017/bitfilmsbd');
@@ -39,4 +38,4 @@ app.use(errorLogger);
 app.use(errors());
 app.use(centralErrorHandler);
 
-app.listen(PORT);
+module.exports = app;

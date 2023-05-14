@@ -25,6 +25,7 @@ const createFilm = (req, res, next) => {
       }
       if (err.code === 11000) {
         next(new ConflictError('Этот фильм уже добавлен'));
+        return;
       }
       next(err);
     });
@@ -49,18 +50,3 @@ module.exports = {
   createFilm,
   deleteFilm,
 };
-
-// {
-//   "country": "Russia",
-//   "director": "andru",
-//   "duration": "60",
-//   "year": "1982",
-//   "description": "film",
-//   "image": "https://plus.unsplash.com/premium_photo-1666264200754-1a2d5f2f6695?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&  auto=format&fit=crop&w=1470&q=80",
-//   "trailerLink" : "https://plus.unsplash.com/premium_photo-1666264200754-1a2d5f2f6695?ixlib=rb-4.0.3& ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-//   "thumbnail": "https://plus.unsplash.com/premium_photo-1666264200754-1a2d5f2f6695?ixlib=rb-4.0.3&    ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-//   "owner": "645fc9642154876593b9c52a",
-//   "movieId": "645fc9642154876593b9c52d",
-//   "nameRu": "Катастрофа",
-//   "nameEn": "da"
-// }

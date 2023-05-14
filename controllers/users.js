@@ -28,6 +28,7 @@ const createUser = (req, res, next) => {
       // повторный email
       if (err.code === 11000) {
         next(new ConflictError('Данный email уже был зарегистрирован'));
+        return;
       }
       next(err);
     });
@@ -72,6 +73,7 @@ const getMe = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданн некорректный _id'));
+        return;
       }
       next(err);
     });
