@@ -32,7 +32,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use(requestLogger);
-app.use('/', appRoutes);
+app.use('/api', appRoutes);
 app.use(errorLogger);
 
 app.use(errors());
