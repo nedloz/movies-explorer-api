@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 
 require('dotenv').config();
 
 const appRoutes = require('./routes/app');
 const centralErrorHandler = require('./middlewares/centralErrorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const limiter = require('./middlewares/limiter');
 
 const app = express();
 
@@ -18,13 +18,6 @@ try {
 } catch (err) {
   process.exit();
 }
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
 
 app.use(helmet());
 app.use(limiter);
