@@ -13,6 +13,6 @@ router.use('/signin', signInValidator, login);
 router.use('/signout', signOut);
 router.use('/users', auth, usersRouter);
 router.use('/movies', auth, moviesRouter);
-router.use('*', auth, (req, res, next) => next(new NotFoundError('Такого пути не существует')));
+router.use('*', (req, res, next) => next(new NotFoundError('Такого пути не существует')));
 
 module.exports = router;
