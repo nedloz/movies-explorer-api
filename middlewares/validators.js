@@ -1,6 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
 
-const { linkSchema, ruSchema, enSchema } = require('../utils/constants');
+const { linkSchema } = require('../utils/constants');
 
 const signUpValidator = celebrate({
   body: Joi.object().keys({
@@ -19,8 +19,8 @@ const signInValidator = celebrate({
 
 const updateMeValidator = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().email(),
-    name: Joi.string().min(2).max(30),
+    email: Joi.string().email().required(),
+    name: Joi.string().min(2).max(30).required(),
   }),
 });
 
@@ -34,16 +34,15 @@ const createFilmValidator = celebrate({
     image: Joi.string().required().pattern(linkSchema),
     trailerLink: Joi.string().required().pattern(linkSchema),
     thumbnail: Joi.string().required().pattern(linkSchema),
-    owner: Joi.string().required().alphanum().length(24),
-    movieId: Joi.string().required(),
-    nameRu: Joi.string().required().pattern(ruSchema),
-    nameEn: Joi.string().required().pattern(enSchema),
+    movieId: Joi.number().required(),
+    nameRU: Joi.string().required(),
+    nameEN: Joi.string().required(),
   }),
 });
 
 const deleteFilmValidator = celebrate({
   params: Joi.object().keys({
-    _id: Joi.string().required().alphanum().length(24),
+    _id: Joi.string().required().hex().length(24),
   }),
 });
 

@@ -5,6 +5,12 @@ const Users = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError'); // 404
 const BadRequestError = require('../errors/BadRequestError'); // 400
 const ConflictError = require('../errors/ConflictError'); // 409
+const {
+  uncorrectDataText, emailConflictText,
+  notFoundIdText, uncorrectIdText,
+  notFoundUserText,
+} = require('../utils/constants');
+const { devJwtSecret } = require('../utils/config');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -22,12 +28,12 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданны некорректные данные'));
+        next(new BadRequestError(uncorrectDataText));
         return;
       }
       // повторный email
       if (err.code === 11000) {
-        next(new ConflictError('Данный email уже был зарегистрирован'));
+        next(new ConflictError(emailConflictText));
         return;
       }
       next(err);
@@ -40,7 +46,7 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        NODE_ENV === 'production' ? JWT_SECRET : devJwtSecret,
         { expiresIn: '7d' },
       );
       res
@@ -50,6 +56,7 @@ const login = (req, res, next) => {
           sameSite: true,
         })
         .send({
+          _id: user._id,
           email: user.email,
           name: user.name,
         });
@@ -65,14 +72,17 @@ const getMe = (req, res, next) => {
   Users.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Пользователь по данному id не найден'));
+        next(new NotFoundError(notFoundIdText));
         return;
       }
-      res.send(user);
+      res.send({
+        email: user.email,
+        name: user.name,
+      });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Переданн некорректный _id'));
+        next(new BadRequestError(uncorrectIdText));
         return;
       }
       next(err);
@@ -85,18 +95,22 @@ const updateMe = (req, res, next) => {
   Users.findByIdAndUpdate(req.user._id, newUser, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Запрашиваемый пользователь не найден'));
+        next(new NotFoundError(notFoundUserText));
         return;
       }
       res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданны некорректные данные'));
+        next(new BadRequestError(uncorrectDataText));
         return;
       }
       if (err.name === 'CastError') {
-        next(new BadRequestError('Передан некорректный _id пользователя'));
+        next(new BadRequestError(uncorrectIdText));
+        return;
+      }
+      if (err.code === 11000) {
+        next(new ConflictError(emailConflictText));
         return;
       }
       next(err);

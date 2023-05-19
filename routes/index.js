@@ -10,7 +10,7 @@ const NotFoundError = require('../errors/NotFoundError');
 
 router.use('/signup', signUpValidator, createUser);
 router.use('/signin', signInValidator, login);
-router.use('/signout', signOut);
+router.use('/signout', auth, signOut);
 router.use('/users', auth, usersRouter);
 router.use('/movies', auth, moviesRouter);
 router.use('*', (req, res, next) => next(new NotFoundError('Такого пути не существует')));

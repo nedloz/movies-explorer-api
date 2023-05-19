@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { linkSchema, ruSchema, enSchema } = require('../utils/constants');
+const { linkSchema } = require('../utils/constants');
 
 const movieShema = new mongoose.Schema({
   country: {
@@ -55,27 +55,16 @@ const movieShema = new mongoose.Schema({
     required: true,
   },
   movieId: { // id с другого сервиса
-    type: String,
+    type: Number,
     required: true,
-    unique: true,
   },
-  nameRu: { // валидация русского
+  nameRU: { // валидация русского
     type: String,
     required: true,
-    validate: {
-      validator(v) {
-        ruSchema.test(v);
-      },
-    },
   },
-  nameEn: { // валидация англ
+  nameEN: { // валидация англ
     type: String,
     required: true,
-    validate: {
-      validator(v) {
-        enSchema.test(v);
-      },
-    },
   },
 }, { versionKey: false });
 

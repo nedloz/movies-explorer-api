@@ -2,8 +2,15 @@ const Movies = require('../models/movie');
 
 const NotFoundError = require('../errors/NotFoundError'); // 404
 const BadRequestError = require('../errors/BadRequestError'); // 400
-const ConflictError = require('../errors/ConflictError'); // 409
+// const ConflictError = require('../errors/ConflictError'); // 409
 const ForbiddenError = require('../errors/ForbiddenError');
+
+const {
+  uncorrectDataText,
+  notFoundFilmText,
+  deleteNotYourFilmText,
+  fineDeleteFilmText,
+} = require('../utils/constants');
 
 const getFilms = (req, res, next) => {
   Movies.find({})
@@ -14,17 +21,13 @@ const getFilms = (req, res, next) => {
 
 const createFilm = (req, res, next) => {
   const filmInfo = req.body;
-  Movies.create(filmInfo)
+  Movies.create({ ...filmInfo, owner: req.user._id })
     .then((film) => {
       res.send(film);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданны некорректные данные'));
-        return;
-      }
-      if (err.code === 11000) {
-        next(new ConflictError('Этот фильм уже добавлен'));
+        next(new BadRequestError(uncorrectDataText));
         return;
       }
       next(err);
@@ -34,13 +37,14 @@ const createFilm = (req, res, next) => {
 const deleteFilm = (req, res, next) => {
   const { _id } = req.params;
   Movies.findById(_id)
-    .orFail(() => new NotFoundError('Фильм с указанным _id не найден'))
+    .orFail(() => new NotFoundError(notFoundFilmText))
     .then((film) => {
-      if (!film.owner.equals(req.user._id)) {
-        return next(new ForbiddenError('Вы не можете удалить фильм который вы не сохраняли'));
+      if (!film.owner._id.equals(req.user._id)) {
+        next(new ForbiddenError(deleteNotYourFilmText));
+        return;
       }
-      return film.deleteOne(film)
-        .then(() => res.send('Фильм удален'));
+      film.deleteOne(film)
+        .then(() => res.send({ message: fineDeleteFilmText }));
     })
     .catch(next);
 };

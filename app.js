@@ -6,25 +6,29 @@ const helmet = require('helmet');
 
 require('dotenv').config();
 
-const appRoutes = require('./routes/app');
+const appRoutes = require('./routes/index');
 const centralErrorHandler = require('./middlewares/centralErrorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const limiter = require('./middlewares/limiter');
+const { dbLink } = require('./utils/config');
+
+const { NODE_ENV, DB_URL } = process.env;
 
 const app = express();
 
 try {
-  mongoose.connect('mongodb://127.0.0.1:27017/bitfilmsbd');
+  mongoose.connect(NODE_ENV === 'production' ? DB_URL : dbLink);
 } catch (err) {
   process.exit();
 }
 
 app.use(helmet());
-app.use(limiter);
+
 app.use(cookieParser());
 app.use(express.json());
 
 app.use(requestLogger);
+app.use(limiter);
 app.use('/api', appRoutes);
 app.use(errorLogger);
 
