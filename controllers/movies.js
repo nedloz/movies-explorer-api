@@ -13,7 +13,7 @@ const {
 } = require('../utils/constants');
 
 const getFilms = (req, res, next) => {
-  Movies.find({})
+  Movies.find({ owner: req.user._id })
     .populate('owner')
     .then((films) => res.send(films))
     .catch(next);
@@ -44,7 +44,8 @@ const deleteFilm = (req, res, next) => {
         return;
       }
       film.deleteOne(film)
-        .then(() => res.send({ message: fineDeleteFilmText }));
+        .then(() => res.send({ message: fineDeleteFilmText }))
+        .catch(next);
     })
     .catch(next);
 };

@@ -1,3 +1,5 @@
+const { centralServerErrorText } = require('../utils/constants');
+
 const centralErrorHandler = (err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res
@@ -5,7 +7,7 @@ const centralErrorHandler = (err, req, res, next) => {
     .send({
       message:
         statusCode === 500
-          ? 'На сервере произошла ошибка'
+          ? centralServerErrorText
           : message,
     });
   next();

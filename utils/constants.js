@@ -8,6 +8,10 @@ const notFoundUserText = 'Запрашиваемый пользователь н
 const notFoundFilmText = 'Фильм с данным id не найден';
 const deleteNotYourFilmText = 'Вы не можете удалить фильм который вы не сохраняли';
 const fineDeleteFilmText = 'Фильм удален';
+const centralServerErrorText = 'На сервере произошла ошибка';
+const uncorrectEmailOrPassword = 'Неправильные почта или пароль';
+const notFoundPathText = 'Такого пути не существует';
+const unAuthorizedText = 'Необходима авторизация';
 
 module.exports = {
   linkSchema,
@@ -19,4 +23,8 @@ module.exports = {
   notFoundFilmText,
   deleteNotYourFilmText,
   fineDeleteFilmText,
+  centralServerErrorText,
+  uncorrectEmailOrPassword,
+  notFoundPathText,
+  unAuthorizedText,
 };
