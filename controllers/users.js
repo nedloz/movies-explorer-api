@@ -76,6 +76,7 @@ const getMe = (req, res, next) => {
         return;
       }
       res.send({
+        _id: user._id,
         email: user.email,
         name: user.name,
       });
